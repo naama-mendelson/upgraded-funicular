@@ -14,7 +14,7 @@ interface AuthContextValue {
   logout: () => void;
 }
 
-// פונקציית עזר לבדיקה אם מחרוזת היא JSON תקין
+
 const getSafeUser = () => {
   const storedUser = localStorage.getItem("user");
   if (!storedUser || storedUser === "undefined") return null;
@@ -63,8 +63,7 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
-  // אין צורך ב-useEffect שקורא שוב מה-LocalStorage כי כבר עשינו זאת ב-initialState
-
+ 
   const login = (token: string, user: UserProps) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
@@ -81,7 +80,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       title: 'התנתקת בהצלחה!',
       showConfirmButton: false,
       timer: 1500,
-      background: '#1a1a1a', // עיצוב יוקרתי כהה
+      background: '#1a1a1a', 
       color: '#ffffff',
       iconColor: '#d4af37'
     });

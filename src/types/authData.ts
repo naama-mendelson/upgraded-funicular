@@ -4,6 +4,7 @@ export  interface AuthFormInputs{
     password: string;
 }
 export interface UserProps{
+    username: string;
     id: string;
     name: string;
     email: string;

@@ -1,27 +1,27 @@
 import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // הוסיפי useNavigate
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import usersService from '../../services/usersService';
 import { useAuth } from '../../context/AuthContext';
+import Spinner from '../../components/features/Spinner';
+import type { User } from '../../types/User';
 
 const GetUserById = () => {
-    const navigate = useNavigate(); // הגדירי את ה-Hook
+    const navigate = useNavigate(); 
     const { state } = useAuth();
-    const token = state.token!;
-    const { id } = useParams<{ id: string }>(); // שליפת ה-ID מה-URL
+    const token = state.token;
+    const { id } = useParams<{ id: string }>(); 
+    const userId = id ? parseInt(id) : NaN;
+    const isValidId = !isNaN(userId);
 
-    const { data, isLoading, isError } = useQuery({
+    const { data: user, isLoading, isError } = useQuery<User>({
         queryKey: ["user", id],
-        // תיקון: שליחת ה-ID וה-Token בסדר הנכון
-        queryFn: () => usersService.getUserById(parseInt(id!), token).then(res => res.data),
-        enabled: !!token && !!id,
+        queryFn: () => usersService.getUserById(userId, token || "").then(res => res.data),
+        enabled: !!token && isValidId,
     });
 
-    if (isLoading) return <div>טוען משתמש...</div>;
-    // אם המשתמש לא נמצא, זה ייכנס לכאן (כמו בצילום האחרון שלך)
-    if (isError || !data) return <div>משתמש לא נמצא</div>;
-
-    const user = data; 
+    if (isLoading) return <div><Spinner/></div>;
+    if (isError || !user) return <div>משתמש לא נמצא או שאין לך הרשאה לצפות בו</div>;
 
     return (
         <div style={{ padding: "20px", direction: "rtl" }}>
@@ -29,6 +29,8 @@ const GetUserById = () => {
             <h1>פרטי משתמש: {user.name}</h1>
             <p>אימייל: {user.email}</p>
             <p>תפקיד: <strong>{user.role}</strong></p>
+            <p>id:{user.id}</p>
+            <p>נוצר בתאריך: {new Date(user.created_at).toLocaleDateString('he-IL')}</p>
         </div>
     );
 };

@@ -2,7 +2,7 @@ import axios from "axios";
 import type { AuthFormInputs } from "../types/authData";
 
 export const authService = {
-    login:(data: AuthFormInputs) => {
+    login:(data: AuthFormInputs, password: string) => {
         return axios.post("http://localhost:4000/auth/login", data);
     },
     register:  (data:  AuthFormInputs) => {
